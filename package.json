@@ -4,7 +4,8 @@
   "main": "dist/fipman.sdk.min.js",
   "scripts": {
     "build": "webpack",
-    "test": "npm run build && mocha -r jsdom-global/register",
+    "testOnly" : "mocha -r jsdom-global/register",
+    "test": "npm run build && npm run lint && npm run testOnly",
     "lint" : "eslint ./src/index.js --fix"
   },
   "keywords": [],
