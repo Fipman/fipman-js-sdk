@@ -1,8 +1,8 @@
 "use strict";
 const validStorages = ["s3"];
 let _options = null, _callback = null;
-let uploaderURL = "https://www.fipman.com/uploader/?options="; //Fipman Uploader App Url
-const style = ".fipman-overlay{position:fixed;top:0;right:0;bottom:0;left:0;z-index:1000;background:rgba(0,0,0,.8)}.fipman-container{position:fixed;overflow:hidden;min-height:300px;top:100px;right:100px;bottom:100px;left:100px;background:#eee;box-sizing:content-box;-webkit-box-sizing:content-box}.fipman-close{position:fixed;top:104px;right:108px;width:35px;height:35px;z-index:20;cursor:pointer}.fipman-close>a{text-indent:-9999px;overflow:hidden;display:block;width:100%;height:100%;background:url(https://d1zyh3sbxittvg.cloudfront.net/close.png) 50% 50% no-repeat}";
+let uploaderURL = "http://client.fipman.com/?options="; //Fipman Uploader App Url
+const style = ".fipman-overlay{position:fixed;top:0;right:0;bottom:0;left:0;z-index:1000;background:rgba(239, 239, 242, 0.8)}.fipman-container{position:fixed;overflow:hidden;min-height:300px;top:50px;right:150px;bottom:50px;left:150px;box-sizing:content-box;-webkit-box-sizing:content-box}";
 let iframeContainer = "";
 
 const init = function (options) {
@@ -16,7 +16,7 @@ const init = function (options) {
 		lang: options.language || "en",
 		allowMultipleUpload: options.allowMultipleUpload === undefined ? true : options.allowMultipleUpload,
 		allowFiles: options.allowFiles || "*",
-		maxFileSize: options.maxFileSize || 0
+		maxFileSize: (options.maxFileSize || 0) * 1000
 	});
 	setIframe();
 
@@ -24,10 +24,22 @@ const init = function (options) {
 };
 
 const setIframe = function () {
-	iframeContainer = "<div class='fipman-container'><div class='fipman-close'><a onClick='return fipmanClient.hide()'>X</a></div>";
+	iframeContainer = "<div><div id='fipman-inner-container' class='fipman-container'>";
 	iframeContainer += "<iframe name='filepicker_dialog' id='filepicker_dialog' border='0' frameborder='0' marginwidth='0' marginheight='0' src='" + uploaderURL + "' style='width: 100%; height: 100%; border: none; position: relative;'></iframe>'";
 	iframeContainer += "</div>";
 	return iframeContainer;
+};
+
+const calculateModalPosition = function(){
+	var docWidth = document.documentElement.clientWidth;
+	var docHeight = document.documentElement.clientHeight;	
+
+	var iframeRatio = 1.86;
+	var iframeWidth = docWidth - 300;
+	var iframeHeight = iframeWidth / iframeRatio;
+	var bottomPosition = iframeHeight <= docHeight ? (docHeight - 50 - iframeHeight) : 50;
+	
+	document.getElementById("fipman-inner-container").style.bottom = bottomPosition +"px";
 };
 
 const onEventMessage = function (e) {
@@ -44,10 +56,12 @@ const onEventMessage = function (e) {
 
 const removeEventListener = function () {
 	window.removeEventListener("message", onEventMessage, true);
+	window.removeEventListener("resize", calculateModalPosition);
 };
 
 const setEventListener = function () {
 	window.addEventListener("message", onEventMessage, true);
+	window.addEventListener("resize", calculateModalPosition);
 };
 
 const hide = function () {
@@ -87,6 +101,7 @@ const show = function (callback) {
 
 	body.appendChild(container);
 
+	calculateModalPosition();
 	var htmlTag = document.getElementsByTagName("html")[0];
 	htmlTag.style.overflow = "hidden";
 
@@ -113,6 +128,3 @@ if (window._DEV_) { //Export for test
 } else {
 	module.exports = { init, show, hide };
 }
-
-
-

@@ -42,7 +42,7 @@ describe('FIPMAN Javascript SDK', () => {
         it('should set iframe html', () => {
             sdk.uploaderURL = "http://fake-url/";
             const iframeContainer = sdk.setIframe();
-            iframeContainer.should.equal("<div class='fipman-container'><div class='fipman-close'><a onClick='return fipmanClient.hide()'>X</a></div><iframe name='filepicker_dialog' id='filepicker_dialog' border='0' frameborder='0' marginwidth='0' marginheight='0' src='https://www.fipman.com/uploader/?options=' style='width: 100%; height: 100%; border: none; position: relative;'></iframe>'</div>");
+            iframeContainer.should.equal("<div><div id='fipman-inner-container' class='fipman-container'><iframe name='filepicker_dialog' id='filepicker_dialog' border='0' frameborder='0' marginwidth='0' marginheight='0' src='http://client.fipman.com/?options=' style='width: 100%; height: 100%; border: none; position: relative;'></iframe>'</div>");
         })
     });
 
@@ -53,7 +53,7 @@ describe('FIPMAN Javascript SDK', () => {
                 storage: 'S3'
             });
 
-            url.should.equal('https://www.fipman.com/uploader/?options={"apiKey":"fake-key","blob":"S3","lang":"en","allowMultipleUpload":true,"allowFiles":"*","maxFileSize":0}')
+            url.should.equal('http://client.fipman.com/?options={"apiKey":"fake-key","blob":"S3","lang":"en","allowMultipleUpload":true,"allowFiles":"*","maxFileSize":0}')
         });
     });
 
